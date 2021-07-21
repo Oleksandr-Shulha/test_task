@@ -23,10 +23,10 @@ public interface EmployeeDao extends CrudRepository<Employee, Long> {
     @Query(
             value = "SELECT e.id as id , e.name as name , e.salary as salary , e.boss_id as boss_id, e.department_id " +
                     "FROM employee AS e " +
-                    "WHERE e.salary IN ( " +
-                        "SELECT max(ei.salary) FROM employee AS ei " +
-                        "JOIN department ej ON ei.department_id = ej.id " +
-                        "GROUP BY ej.id) ",
+                    "WHERE e.salary = ( " +
+                        "SELECT MAX(ei.salary) " +
+                        "FROM employee as ei " +
+                        "WHERE e.department_id = ei.department_id)",
             nativeQuery = true)
     List<Employee> findAllByMaxSalary();
 
@@ -34,7 +34,9 @@ public interface EmployeeDao extends CrudRepository<Employee, Long> {
     @Query(
             value = "SELECT * FROM employee AS e " +
                     "WHERE e.boss_id IS NULL OR e.department_id != " +
-                    "(SELECT department_id FROM employee as ei WHERE e.boss_id = ei.id)",
+                    "(SELECT department_id " +
+                    "FROM employee as ei " +
+                    "WHERE e.boss_id = ei.id)",
             nativeQuery = true)
     List<Employee> findAllWithoutBoss();
 }

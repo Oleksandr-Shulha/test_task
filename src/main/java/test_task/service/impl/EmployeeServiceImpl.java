@@ -45,9 +45,14 @@ public class EmployeeServiceImpl implements EmployeeService {
             employee = employeeIterator.next();
             if (employee.getName().equals(name)) {
                 employeeDao.deleteById(employee.getId());
+                return employee.getId();
             }
         }
-        return employee == null ? 0L : employee.getId();
+        if (employee == null) {
+            return 0L;
+        } else {
+            throw new IllegalArgumentException("Can't find employee by name: " + name);
+        }
     }
 
     @Override
@@ -57,7 +62,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         //TODO Implement method using Collection
         // ---write your code here
         Iterator<Employee> employeeIterator = employees.iterator();
-        Employee employee;
+        Employee employee = null;
 
         while (employeeIterator.hasNext()) {
             employee = employeeIterator.next();
@@ -66,7 +71,11 @@ public class EmployeeServiceImpl implements EmployeeService {
                 return employeeDao.save(employee).getId();
             }
         }
-        return 0L;
+        if (employee == null) {
+            return 0L;
+        } else {
+            throw new IllegalArgumentException("Can't find employee by name: " + name);
+        }
     }
 
     @Override
